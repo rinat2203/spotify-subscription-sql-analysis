@@ -56,3 +56,21 @@ LEFT JOIN payments p
 GROUP BY u.user_id, u.name
 ORDER BY ltv DESC
 LIMIT 5;
+
+# Retention Rate
+SELECT
+    ROUND(
+        COUNT(CASE WHEN end_date IS NULL OR end_date >= CURDATE() THEN user_id END) 
+        / COUNT(user_id) * 100,
+        2
+    ) AS retention_rate_percent
+FROM subscriptions;
+
+# Churn Rate
+SELECT
+    ROUND(
+        COUNT(CASE WHEN end_date < CURDATE() THEN user_id END) 
+        / COUNT(user_id) * 100,
+        2
+    ) AS churn_rate_percent
+FROM subscriptions;
