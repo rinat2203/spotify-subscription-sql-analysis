@@ -47,3 +47,12 @@ The goal is to calculate key business metrics that are commonly used in subscrip
 ## Files
 
 - `queries.sql` — SQL queries for business analysis
+## Query Results
+
+![Activity Metrics](./activity-metrics.jpg)
+
+![Customer Value Analysis](./customer-value.jpg)
+
+![Retention Analysis](./retention-analysis.jpg)
+
+![Churn Analysis.jpg](./churn-analysis.jpg)
