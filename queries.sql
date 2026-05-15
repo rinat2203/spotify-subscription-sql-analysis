@@ -7,13 +7,13 @@
 -- subscriptions(subscription_id, user_id, plan_type, price, start_date, end_date)
 -- payments(payment_id, user_id, amount, payment_date)
 
-# DAU
+-- DAU
 SELECT payment_date, COUNT(DISTINCT user_id) AS DAU
 FROM payments
 GROUP BY payment_date
 ORDER BY payment_date;
 
-# WAU
+-- WAU
 SELECT YEAR(payment_date) AS year,
        WEEK(payment_date, 1) AS week,
        COUNT(DISTINCT user_id) AS WAU
@@ -21,7 +21,7 @@ FROM payments
 GROUP BY YEAR(payment_date), WEEK(payment_date, 1)
 ORDER BY year, week;
 
-# MAU
+-- MAU
 SELECT YEAR(payment_date) AS year,
        MONTH(payment_date) AS month,
        COUNT(DISTINCT user_id) AS mau
@@ -29,7 +29,7 @@ FROM payments
 GROUP BY YEAR(payment_date), MONTH(payment_date)
 ORDER BY year, month;
 
-# AOV
+-- AOV
 SELECT u.user_id, u.name,
     ROUND(AVG(p.amount), 2) AS aov
 FROM users u
@@ -38,7 +38,7 @@ LEFT JOIN payments p
 GROUP BY u.user_id, u.name
 ORDER BY aov DESC;
 
-# LTV
+-- LTV
 SELECT u.user_id, u.name,
     COALESCE(SUM(p.amount), 0) AS ltv
 FROM users u
@@ -47,7 +47,7 @@ LEFT JOIN payments p
 GROUP BY u.user_id, u.name
 ORDER BY ltv DESC;
 
-# Top 5 Customers by LTV
+-- Top 5 Customers by LTV
 SELECT u.user_id, u.name,
     COALESCE(SUM(p.amount), 0) AS ltv
 FROM users u
@@ -57,7 +57,7 @@ GROUP BY u.user_id, u.name
 ORDER BY ltv DESC
 LIMIT 5;
 
-# Retention Rate
+-- Retention Rate
 WITH monthly_users AS (
     SELECT DISTINCT
         user_id,
@@ -76,7 +76,7 @@ LEFT JOIN monthly_users m2
 GROUP BY m1.month
 ORDER BY m1.month;
 
-# Churn Rate
+-- Churn Rate
 WITH monthly_users AS (
     SELECT DISTINCT
         user_id,
