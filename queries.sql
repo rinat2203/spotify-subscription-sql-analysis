@@ -28,3 +28,31 @@ SELECT YEAR(payment_date) AS year,
 FROM payments
 GROUP BY YEAR(payment_date), MONTH(payment_date)
 ORDER BY year, month;
+
+# AOV
+SELECT u.user_id, u.name,
+    ROUND(AVG(p.amount), 2) AS aov
+FROM users u
+LEFT JOIN payments p
+    ON u.user_id = p.user_id
+GROUP BY u.user_id, u.name
+ORDER BY aov DESC;
+
+# LTV
+SELECT u.user_id, u.name,
+    COALESCE(SUM(p.amount), 0) AS ltv
+FROM users u
+LEFT JOIN payments p
+    ON u.user_id = p.user_id
+GROUP BY u.user_id, u.name
+ORDER BY ltv DESC;
+
+# Top 5 Customers by LTV
+SELECT u.user_id, u.name,
+    COALESCE(SUM(p.amount), 0) AS ltv
+FROM users u
+LEFT JOIN payments p
+    ON u.user_id = p.user_id
+GROUP BY u.user_id, u.name
+ORDER BY ltv DESC
+LIMIT 5;
