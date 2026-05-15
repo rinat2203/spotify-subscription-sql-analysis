@@ -58,19 +58,39 @@ ORDER BY ltv DESC
 LIMIT 5;
 
 # Retention Rate
+WITH monthly_users AS (
+    SELECT DISTINCT
+        user_id,
+        DATE_FORMAT(payment_date, '%Y-%m-01') AS month
+    FROM payments
+)
 SELECT
-    ROUND(
-        COUNT(CASE WHEN end_date IS NULL OR end_date >= CURDATE() THEN user_id END) 
-        / COUNT(user_id) * 100,
-        2
-    ) AS retention_rate_percent
-FROM subscriptions;
+    m1.month,
+    COUNT(DISTINCT m1.user_id) AS users_current_month,
+    COUNT(DISTINCT m2.user_id) AS retained_users,
+    COUNT(DISTINCT m2.user_id) * 100.0 / COUNT(DISTINCT m1.user_id) AS retention_rate
+FROM monthly_users m1
+LEFT JOIN monthly_users m2
+    ON m1.user_id = m2.user_id
+   AND m2.month = DATE_ADD(m1.month, INTERVAL 1 MONTH)
+GROUP BY m1.month
+ORDER BY m1.month;
 
 # Churn Rate
+WITH monthly_users AS (
+    SELECT DISTINCT
+        user_id,
+        DATE_FORMAT(payment_date, '%Y-%m-01') AS month
+    FROM payments
+)
 SELECT
-    ROUND(
-        COUNT(CASE WHEN end_date < CURDATE() THEN user_id END) 
-        / COUNT(user_id) * 100,
-        2
-    ) AS churn_rate_percent
-FROM subscriptions;
+    m1.month,
+    COUNT(DISTINCT m1.user_id) AS users_current_month,
+    COUNT(DISTINCT m2.user_id) AS retained_users,
+    COUNT(DISTINCT m2.user_id) * 100.0 / COUNT(DISTINCT m1.user_id) AS retention_rate
+FROM monthly_users m1
+LEFT JOIN monthly_users m2
+    ON m1.user_id = m2.user_id
+   AND m2.month = DATE_ADD(m1.month, INTERVAL 1 MONTH)
+GROUP BY m1.month
+ORDER BY m1.month;
